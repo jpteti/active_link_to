@@ -1,6 +1,33 @@
 require_relative 'test_helper'
 
 class ActiveLinkToTest < MiniTest::Test
+  def setup
+    reset_configuration
+  end
+
+  def reset_configuration
+    ActiveLinkTo.configuration = ActiveLinkTo::Configuration.new
+  end
+
+  def test_default_active_class
+    assert_equal 'active', ActiveLinkTo.configuration.class_active
+  end
+
+  def test_default_inactive_class
+    assert_equal '', ActiveLinkTo.configuration.class_inactive
+  end
+
+  def test_default_active_disable
+    refute ActiveLinkTo.configuration.active_disable
+  end
+
+  def test_default_wrap_tag
+    assert_nil ActiveLinkTo.configuration.wrap_tag
+  end
+
+  def test_default_wrap_class
+    assert_equal '', ActiveLinkTo.configuration.wrap_class
+  end
 
   def test_is_active_link_booleans_test
     assert is_active_link?('/', true)
@@ -161,6 +188,17 @@ class ActiveLinkToTest < MiniTest::Test
     set_path('/root')
     link = active_link_to('label', '/root')
     assert_html link, 'a.active[href="/root"]', 'label'
+
+    link = active_link_to('label', '/other')
+    assert_html link, 'a[href="/other"]', 'label'
+  end
+
+  def test_active_link_to_with_configured_alternative_class_active_value
+    ActiveLinkTo.configuration.class_active = 'is-active'
+
+    set_path('/root')
+    link = active_link_to('label', '/root')
+    assert_html link, 'a.is-active[href="/root"]', 'label'
 
     link = active_link_to('label', '/other')
     assert_html link, 'a[href="/other"]', 'label'
