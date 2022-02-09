@@ -41,7 +41,9 @@ module ActiveLinkTo
     link_options[:class] = css_class if css_class.present?
     link_options['aria-current'] = 'page' if is_active_link?(url, active_options[:active])
 
-    link = if (active_options[:active_disable] === true || ActiveLinkTo.configuration.active_disable === true) && is_active_link?(url, active_options[:active])
+    active_disable = active_options.member?(:active_disable) ? active_options[:active_disable] : ActiveLinkTo.configuration.active_disable
+
+    link = if active_disable && is_active_link?(url, active_options[:active])
       content_tag(:span, name, link_options)
     else
       link_to(name, url, link_options)

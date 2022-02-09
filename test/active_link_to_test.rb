@@ -222,6 +222,29 @@ class ActiveLinkToTest < MiniTest::Test
     assert_html link, 'a.off[href="/other"]', 'label'
   end
 
+  def test_active_link_to_inactive_class_configuration
+    ActiveLinkTo.configuration.class_inactive = 'inactive'
+
+    set_path('/root')
+    link = active_link_to('label', '/root')
+    assert_html link, 'a.active[href="/root"]', 'label'
+
+    link = active_link_to('label', '/other')
+    assert_html link, 'a.inactive[href="/other"]', 'label'
+  end
+
+  def test_active_link_to_with_custom_classes_overrides_configured_values
+    ActiveLinkTo.configuration.class_active = 'is-active'
+    ActiveLinkTo.configuration.class_inactive = 'is-inactive'
+
+    set_path('/root')
+    link = active_link_to('label', '/root', class_active: 'on')
+    assert_html link, 'a.on[href="/root"]', 'label'
+
+    link = active_link_to('label', '/other', class_inactive: 'off')
+    assert_html link, 'a.off[href="/other"]', 'label'
+  end
+
   def test_active_link_to_with_wrap_tag
     set_path('/root')
     link = active_link_to('label', '/root', wrap_tag: :li)
@@ -234,10 +257,43 @@ class ActiveLinkToTest < MiniTest::Test
     assert_html link, 'li.active a.testing[href="/root"]', 'label'
   end
 
+  def test_active_link_to_with_wrap_tag_configuration_set
+    ActiveLinkTo.configuration.wrap_tag = :li
+
+    set_path('/root')
+    link = active_link_to('label', '/root')
+    assert_html link, 'li.active a[href="/root"]', 'label'
+
+    link = active_link_to('label', '/root', active_disable: true)
+    assert_html link, 'li.active span', 'label'
+
+    link = active_link_to('label', '/root', class: 'testing')
+    assert_html link, 'li.active a.testing[href="/root"]', 'label'
+  end
+
   def test_active_link_to_with_active_disable
     set_path('/root')
     link = active_link_to('label', '/root', active_disable: true)
     assert_html link, 'span.active', 'label'
+  end
+
+  def test_active_link_to_with_active_disable_configuration
+    ActiveLinkTo.configuration.active_disable = true
+
+    set_path('/root')
+    link = active_link_to('label', '/root')
+    assert_html link, 'span.active', 'label'
+  end
+
+  def test_active_link_to_with_active_disable_configuration_override
+    ActiveLinkTo.configuration.active_disable = true
+
+    set_path('/root')
+    link = active_link_to('label', '/root')
+    assert_html link, 'span.active', 'label'
+
+    link = active_link_to('label', '/root', active_disable: false)
+    assert_html link, 'a.active', 'label'
   end
 
   def test_should_not_modify_passed_params
