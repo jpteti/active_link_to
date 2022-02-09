@@ -45,7 +45,7 @@ Several of the options that can be set in a calling of the helper can also be se
 initializer. For example, if you want to use `is-active` as the active class all the time,
 create `config/initializers/active_link_to.rb` with:
 
-```
+```ruby
 ActiveLinkTo.configure do |config|
   config.class_active = 'is-active'
 end
